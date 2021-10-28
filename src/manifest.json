@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "c0ur5390w3r-1m5-3x73n510n",
+  "short_name": "LMSExt",
+  "description": "Manage your homework easily",
+  "version": "1.0.0",
+  "author": "Vimmer",
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://lms.ynu.ac.jp/lms/homeHoml/"
+      ],
+      "js": [
+        "show_homework.js"
+      ],
+      "css": []
+    },
+    {
+      "matches": [
+        "https://lms.ynu.ac.jp/lms/homeHoml/linkKougi"
+      ],
+      "js": [
+        "fetch_homework.js"
+      ],
+      "css": []
+    }
+  ]
+
+}
