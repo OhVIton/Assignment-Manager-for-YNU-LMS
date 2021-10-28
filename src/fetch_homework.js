@@ -18,22 +18,26 @@ var homework_date = document.querySelectorAll("tbody > tr > td.td03")
 
 for (let i = 0; i < homework_date.length; i++) {
     var regex
+    var available_txt
     if (LANGUAGE == "English") {
-        regex = /(Submission Due on|Resubmission deadline):(.*)/
+        regex = /(Submission Due on|Resubmission deadline|Response Due on):(.*)/
+        available_txt = 'Available'
     }
     else if (LANGUAGE == "日本語") {
-        regex = /(提出期限|再提出期限):(.*)/
+        regex = /(提出期限|再提出期限|未回答):(.*)/
+        available_txt = '公開中'
     }
     
     var is_due = homework_date[i].textContent.match(regex);
-    if (is_due) {
+    var is_available = homework_date[i].parentElement.querySelector("td.td02").textContent.trim() == available_txt
+    if (is_due && is_available) {
 
         var due_date = is_due[2]
         var homework = new Map()
-        var homework_id = homework_date[i].parentElement.querySelector("td.td01")
-        var homework_name = homework_date[i].parentElement.querySelector("td.td01 > a")
+        var homework_id = homework_date[i].parentElement.querySelector("td.td01").id
+        var homework_name = homework_date[i].parentElement.querySelector("td.td01")
         
-        homework.set("ID", homework_id.id)
+        homework.set("ID", homework_id)
         homework.set("Subject", subject_name)
         homework.set("Name", homework_name.textContent)
         homework.set("Due", new Date(due_date))
@@ -43,7 +47,7 @@ for (let i = 0; i < homework_date.length; i++) {
 
 var banner = `
 <div id=\"title\">
-<h2>Homework for this lecture<span>
+<h2>Assignments for this lecture<span>
 <img src=\"/lms/img/cs/yazi3.gif\">
 </h2></div>
 `
@@ -53,7 +57,7 @@ var table_header = `
 <div id="list_block">
 <table border="0" cellpadding="0" cellspacing="0" class="cs_table2">
   <tbody><tr>
-    <th width="37%">Homework</th>
+    <th width="37%">Assignment</th>
     <th width="10%">DEADLINE</th>
   </tr>
 `
@@ -70,9 +74,20 @@ var content = ''
 if (homework_list.length) {
     console.log(homework_list)
     homework_list.forEach(homework => {
+        const icon = (hw_type) => {
+            if(hw_type == "REP") {
+                return "https://lms.ynu.ac.jp/lms/img/cs/icon2b.gif"
+            }
+            else if(hw_type == "ANK") {
+                return "https://lms.ynu.ac.jp/lms/img/cs/icon7b.gif"
+            }
+            else {
+                return "https://lms.ynu.ac.jp/lms/img/cs/icon5b.gif"
+            }
+        }
         content += `
         <tr>
-            <td><img src="/lms/img/cs/icon2b.gif" alt="Report">${homework.get("Name")}</td>
+            <td><img src="${icon(homework.get("ID").substring(0, 3))}" alt="Report">${homework.get("Name")}</td>
             <td align="center">${homework.get("Due").toLocaleDateString()}</a></td>
         </tr>
         `
