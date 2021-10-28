@@ -8,3 +8,6 @@ DOM(データ取得)は講義ページに手動でアクセスした時のみな
 見ろ  
 
 https://reviews.f-tools.net/Add-On/Jisaku-Tuika.html  
+
+### 使用方法
+講義ページを開くと、以下のように
