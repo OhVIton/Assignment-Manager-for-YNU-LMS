@@ -9,7 +9,7 @@ DOM操作(データ取得)は講義ページに手動でアクセスした時の
 
 https://reviews.f-tools.net/Add-On/Jisaku-Tuika.html  
 
-### 使用方法
+## 使用方法
 講義ページを開くと、以下のように未提出または未回答の課題が表示されます。  
 この時、課題の情報がブラウザ内のデータベース(IndexedDB)に保存されます。  
 ![lecture page](images/photo_00.png)
@@ -17,10 +17,10 @@ https://reviews.f-tools.net/Add-On/Jisaku-Tuika.html
 そして、そのデータベースの情報をもとに、LMSのトップページで課題一覧が表示されます。
 ![toppage](images/photo_01.png)
 
-### サーバー負荷について
+## サーバー負荷について
 DOM操作(データ取得)はあくまで**講義ページを手動で開いたときのみ**なので、サーバー負荷は一般の利用時と変わらないと推測されます。
 
-### ビルド方法
+## ビルド方法
 以下を実行
 
 ```
