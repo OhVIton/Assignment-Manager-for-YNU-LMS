@@ -14,11 +14,9 @@ console.log(LANGUAGE)
 
 // Select the specified subject's name from "[HOME] > subject_name_ja[subject_name_en][subject_id]"
 var subject_name = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[.*\])/)[2] // subject_name_ja[subject_name_en]
-var homework_id = document.querySelectorAll("[id^=REP]")
-var homework_name = document.querySelectorAll("[id^=REP] > a")
 var homework_date = document.querySelectorAll("tbody > tr > td.td03")
 
-for (let i = 0, j = 0; i < homework_date.length; i++) {
+for (let i = 0; i < homework_date.length; i++) {
     var regex
     if (LANGUAGE == "English") {
         regex = /(Submission Due on|Resubmission deadline):(.*)/
@@ -32,11 +30,12 @@ for (let i = 0, j = 0; i < homework_date.length; i++) {
 
         var due_date = is_due[2]
         var homework = new Map()
+        var homework_id = homework_date[i].parentElement.querySelector("td.td01")
+        var homework_name = homework_date[i].parentElement.querySelector("td.td01 > a")
         
-        homework.set("ID", homework_id[j].id)
+        homework.set("ID", homework_id.id)
         homework.set("Subject", subject_name)
-        homework.set("Name", homework_name[j].textContent)
-        j++
+        homework.set("Name", homework_name.textContent)
         homework.set("Due", new Date(due_date))
         homework_list.push(homework)
     }
