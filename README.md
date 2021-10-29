@@ -14,8 +14,15 @@ https://reviews.f-tools.net/Add-On/Jisaku-Tuika.html
 この時、課題の情報がブラウザ内のデータベース(IndexedDB)に保存されます。  
 ![lecture page](images/photo_00.png)
   
-そして、そのデータベースの情報をもとに、LMSのトップページで課題一覧が表示されます。
+そして、そのデータベースの情報をもとに、LMSのトップページで課題一覧が表示されます。  
+また、DEADLINEのリンクにアクセスすると、
 ![toppage](images/photo_01.png)
+以下のようにGoogle カレンダーへの追加もできます
+![googlecalendar](images/photo_02.png)
+
+### 課題の消し方
+データベース上のデータを消す機能はまだ未実装なので、F12→Application→IndexedDB→HomeworkDB→hw_store から手動で削除してください。もっと楽にできるようにしたい。
+![remove](images/photo_03.png)
 
 ## サーバー負荷について
 DOM操作(データ取得)はあくまで**講義ページを手動で開いたときのみ**なので、サーバー負荷は一般の利用時と変わらないと推測されます。

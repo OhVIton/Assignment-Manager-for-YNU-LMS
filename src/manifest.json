@@ -5,6 +5,13 @@
   "description": "Manage your homework easily",
   "version": "0.0.2",
   "author": "Vimmer",
+  
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
 
   "content_scripts": [
     {

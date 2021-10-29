@@ -35,11 +35,11 @@ for (let i = 0; i < homework_date.length; i++) {
         var due_date = is_due[2]
         var homework = new Map()
         var homework_id = homework_date[i].parentElement.querySelector("td.td01").id
-        var homework_name = homework_date[i].parentElement.querySelector("td.td01")
+        var homework_name = homework_date[i].parentElement.querySelector("td.td01").textContent.trim()
         
         homework.set("ID", homework_id)
         homework.set("Subject", subject_name)
-        homework.set("Name", homework_name.textContent)
+        homework.set("Name", homework_name)
         homework.set("Due", new Date(due_date))
         homework_list.push(homework)
     }
@@ -47,7 +47,7 @@ for (let i = 0; i < homework_date.length; i++) {
 
 var banner = `
 <div id=\"title\">
-<h2>Assignments for this lecture<span>
+<h2>Assignments for This Lecture<span>
 <img src=\"/lms/img/cs/yazi3.gif\">
 </h2></div>
 `
