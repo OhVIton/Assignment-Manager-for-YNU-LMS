@@ -1,4 +1,4 @@
-# c0ur5390w3r-1m5-3x73n510n
+# Assignment-Management-CP
 
 未提出（再提出）の課題をトップページで簡単に確認できるようにする Chrome用拡張機能です。 
   
