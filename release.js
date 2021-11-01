@@ -1,5 +1,5 @@
 const zip = require('bestzip');
-let destination = `./release/extension`;
+let destination = `./release/release`;
 if (process.argv.length >= 3) {
   destination += `_${process.argv[2]}`;
 }

@@ -87,7 +87,9 @@ if (homework_list.length) {
         }
         content += `
         <tr>
-            <td><img src="${icon(homework.get("ID").substring(0, 3))}" alt="Report">${homework.get("Name")}</td>
+            <td><img src="${icon(homework.get("ID").substring(0, 3))}" alt="Report">
+            <a href="javascript:void(0)" onclick="kyozaiTitleLink('${homework.get("ID")}','02')">${homework.get("Name")}</a>
+            </td>
             <td align="center">${homework.get("Due").toLocaleDateString()}</a></td>
         </tr>
         `
