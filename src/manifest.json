@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "c0ur5390w3r-1m5-3x73n510n",
+  "name": "Assignment Manager for CP",
   "short_name": "LMSExt",
   "description": "Manage your homework easily",
   "version": "0.0.4",
@@ -25,7 +25,8 @@
     },
     {
       "matches": [
-        "https://lms.ynu.ac.jp/lms/homeHoml/linkKougi"
+        "https://lms.ynu.ac.jp/lms/homeHoml/linkKougi",
+        "https://lms.ynu.ac.jp/lms/corsColl/"
       ],
       "js": [
         "fetch_homework.js"
