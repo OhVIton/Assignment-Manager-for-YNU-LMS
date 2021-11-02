@@ -64,6 +64,8 @@ function getNowYMDStr(date){
 async function QueryData() {
     var db = await OpenDB();
     var hw_store = await db.table('hw_store').toArray()
+    hw_store.sort((a,b) => (new Date(a.Due)) - new Date(b.Due))
+    console.log(hw_store)
     var content = ''
     hw_store.forEach(await function(hw) {
         const icon = (hw_type) => {
