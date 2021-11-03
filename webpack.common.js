@@ -3,8 +3,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
-    fetch_homework: './src/fetch_homework.js',
-    show_homework: './src/show_homework.js',
+    // fetch_homework: './src/fetch_homework.js',
+    // show_homework: './src/show_homework.js',
+    fetch_homework_storage: './src/fetch_homework_storage.js',
+    show_homework_storage: './src/show_homework_storage.js',
     background: './src/background.js',
   },
   plugins: [

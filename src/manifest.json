@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "name": "Assignment Manager for CP",
-  "short_name": "LMSExt",
+  "short_name": "ExtOfLMS",
   "description": "Manage your homework easily",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "author": "Vimmer",
   
   "background": {
@@ -12,10 +12,6 @@
     ],
     "persistent": true
   },
-  
-  "browser_action":{
-    "default_popup":"popup.html"
-  },
 
   "content_scripts": [
     {
@@ -23,7 +19,7 @@
         "https://lms.ynu.ac.jp/lms/homeHoml/"
       ],
       "js": [
-        "show_homework.js"
+        "show_homework_storage.js"
       ],
       "css": []
     },
@@ -33,9 +29,13 @@
         "https://lms.ynu.ac.jp/lms/corsColl/"
       ],
       "js": [
-        "fetch_homework.js"
+        "fetch_homework_storage.js"
       ],
       "css": []
     }
+  ],
+  "permissions": [
+    "storage",
+    "tabs"
   ]
 }
