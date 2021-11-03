@@ -8,7 +8,7 @@ DOM操作(データ取得)は講義ページに**手動でアクセスした時�
   
 ## インストール方法
 Releases→最新バージョンを選択して
-![a](images/installation/photo_04.png)  
+![a](images/installation/photo_04a.png)  
 ZIPファイルをダウンロードします
 ![a](images/installation/photo_09.png)  
 ダウンロードしたファイルを右クリック→すべて展開(Windows)か、ダブルクリックで展開(Mac)してください  
