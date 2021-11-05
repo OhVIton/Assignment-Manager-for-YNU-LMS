@@ -1,4 +1,4 @@
-# Assignment-Management-YNU-LMS
+# Assignment-Manager-for-YNU-LMS
 
 未提出（再提出）の課題をトップページで簡単に確認できるようにする Chrome用拡張機能です。 
   
