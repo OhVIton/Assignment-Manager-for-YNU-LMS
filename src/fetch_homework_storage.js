@@ -12,7 +12,16 @@ var LANGUAGE = document.querySelector("#langList > option[selected]").textConten
 console.log(LANGUAGE)
 
 // Select the specified subject's name from "[HOME] > subject_name_ja[subject_name_en][subject_id]"
-var subject_name = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[.*\])/)[2] // subject_name_ja[subject_name_en]
+//var subject_name = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[.*\])/)[2] // subject_name_ja[subject_name_en]
+var subject_name = ''
+//['> 英語演習１ｃ[English Seminar 1c][9005638]', '> ', '英語演習１ｃ', '[', 'English Seminar 1c', ']', '[9005638]', index: 0, input: '> 英語演習１ｃ[English Seminar 1c][9005638]', groups: undefined]
+var subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
+
+if (LANGUAGE == 'English')
+    subject_name = subject_texts[4]
+else if (LANGUAGE == '日本語')
+    subject_name = subject_texts[2]
+
 var homework_date = document.querySelectorAll("tbody > tr > td.td03")
 
 for (let i = 0; i < homework_date.length; i++) {
