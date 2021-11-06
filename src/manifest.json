@@ -1,18 +1,15 @@
 {
-  "manifest_version": 2,
-  "name": "Assignment Manager for CP",
+  "manifest_version": 3,
+  "name": "Assignment Manager for YNU LMS",
   "short_name": "ExtOfLMS",
   "description": "Manage your homework easily",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "author": "Vimmer",
-  
-  "background": {
-    "scripts": [
-      "background.js"
-    ],
-    "persistent": true
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
-
   "content_scripts": [
     {
       "matches": [
@@ -35,7 +32,6 @@
     }
   ],
   "permissions": [
-    "storage",
-    "tabs"
+    "storage"
   ]
 }

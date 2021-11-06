@@ -7,13 +7,15 @@ module.exports = {
     // show_homework: './src/show_homework.js',
     fetch_homework_storage: './src/fetch_homework_storage.js',
     show_homework_storage: './src/show_homework_storage.js',
-    background: './src/background.js',
   },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [
         { from: 'src/manifest.json' },
+        { from: 'src/icon16.png' },
+        { from: 'src/icon48.png' },
+        { from: 'src/icon128.png' },
       ]
     }),
   ],
