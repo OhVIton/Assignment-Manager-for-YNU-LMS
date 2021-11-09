@@ -8,7 +8,7 @@ DOM操作(データ取得)は講義ページに**手動でアクセスした時�
   
   
 **[Chrome Web Store](https://chrome.google.com/webstore/detail/assignment-manager-for-yn/bhdmcaoeabelekcckcmjapokiffkoiam?hl=ja&authuser=0) からインストールできます**  
-![a](images/photo_03.png)  
+![a](images/photo_03.png) 
 
 ## 使用方法
 講義ページを開くと、以下のように未提出または未回答の課題が表示されます。  
