@@ -6,11 +6,23 @@ DOM操作(データ取得)は講義ページに**手動でアクセスした時�
   
 [クソデカ未提出](https://github.com/OhVIton/BigBigNotSubmitted-CP)とも共存可能です。
   
-## インストール方法
   
-** 現在、[Chrome Web Store](https://chrome.google.com/webstore/detail/assignment-manager-for-yn/bhdmcaoeabelekcckcmjapokiffkoiam?hl=ja&authuser=0) からインストールできます **  
+**[Chrome Web Store](https://chrome.google.com/webstore/detail/assignment-manager-for-yn/bhdmcaoeabelekcckcmjapokiffkoiam?hl=ja&authuser=0) からインストールできます**  
 ![a](images/photo_03.png)  
+
+## 使用方法
+講義ページを開くと、以下のように未提出または未回答の課題が表示されます。  
+この時、課題の情報がブラウザ内に保存されます。
+![lecture page](images/photo_00.png)
   
+そして、そのデータベースの情報をもとに、LMSのトップページで課題一覧が表示されます。  
+追加された情報はRemoveボタンを押すと削除できます。  
+また、DEADLINEのリンクにアクセスすると、
+![toppage](images/photo_01.png)
+以下のようにGoogle カレンダーへの追加もできます
+![googlecalendar](images/photo_02.png)
+
+## zipファイルからインストールする場合（開発者向け） 
 Releases→最新バージョンを選択して
 ![a](images/installation/photo_04a.png)  
 ZIPファイルをダウンロードします
@@ -27,18 +39,6 @@ ZIPファイルをダウンロードします
 
 これで完了。おめでとう。  
   
-## 使用方法
-講義ページを開くと、以下のように未提出または未回答の課題が表示されます。  
-この時、課題の情報がブラウザ内に保存されます。
-![lecture page](images/photo_00.png)
-  
-そして、そのデータベースの情報をもとに、LMSのトップページで課題一覧が表示されます。  
-追加された情報はRemoveボタンを押すと削除できます。  
-また、DEADLINEのリンクにアクセスすると、
-![toppage](images/photo_01.png)
-以下のようにGoogle カレンダーへの追加もできます
-![googlecalendar](images/photo_02.png)
-
 ## サーバー負荷について
 DOM操作(データ取得)はあくまで**講義ページを手動で開いたときのみ**なので、サーバー負荷は一般の利用時と変わらないと推測されます。
 
