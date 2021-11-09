@@ -7,6 +7,10 @@ DOM操作(データ取得)は講義ページに**手動でアクセスした時�
 [クソデカ未提出](https://github.com/OhVIton/BigBigNotSubmitted-CP)とも共存可能です。
   
 ## インストール方法
+  
+** 現在、[Chrome Web Store](https://chrome.google.com/webstore/detail/assignment-manager-for-yn/bhdmcaoeabelekcckcmjapokiffkoiam?hl=ja&authuser=0) からインストールできます **  
+![a](images/photo_03.png)  
+  
 Releases→最新バージョンを選択して
 ![a](images/installation/photo_04a.png)  
 ZIPファイルをダウンロードします
