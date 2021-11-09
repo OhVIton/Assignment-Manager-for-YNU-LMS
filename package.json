@@ -36,6 +36,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "dexie": "^3.0.3",
+    "jquery": "^3.6.0",
+    "jquery-paginate": "^1.0.1",
     "moment": "^2.27.0"
   }
 }
