@@ -82,17 +82,20 @@ function QueryData() {
             var name = item[1][NAME]
             var due = new Date(item[1][DUE])
             var days_left = (due - new Date() ) / 86400000
-                const icon = (hw_type) => {
-                    if(hw_type == "REP") {
-                        return "https://lms.ynu.ac.jp/lms/img/cs/icon2b.gif"
-                    }
-                    else if(hw_type == "ANK") {
-                        return "https://lms.ynu.ac.jp/lms/img/cs/icon7b.gif"
-                    }
-                    else {
-                        return "https://lms.ynu.ac.jp/lms/img/cs/icon5b.gif"
-                    }
+            const icon = (hw_type) => {
+                if (hw_type == "REP") {
+                    return "https://lms.ynu.ac.jp/lms/img/cs/icon2b.gif"
                 }
+                else if (hw_type == "ANK") {
+                    return "https://lms.ynu.ac.jp/lms/img/cs/icon7b.gif"
+                }
+                else if (hw_type == "TES") {
+                    return "https://lms.ynu.ac.jp/lms/img/cs/icon3b.gif"
+                }
+                else {
+                    return "https://lms.ynu.ac.jp/lms/img/cs/icon5b.gif"
+                }
+            }
             if (days_left < DISPLAY_LIMIT) {
                 content += `
                 <tr>
