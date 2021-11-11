@@ -10,7 +10,8 @@
     saveToStorage(newAssignments)
     
     const assignments = await loadFromStorage()
-    injectAssignmentTable(assignments)
+    const curLecName_ja = getSubjectTexts()[2]
+    injectAssignmentTable(assignments.filter(x => x.subject_ja == curLecName_ja))
 
 })();
 
@@ -57,7 +58,7 @@ async function getAssignments() {
 
     const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
 
-    let subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
+    let subject_texts = getSubjectTexts()
     const subject_ja = subject_texts[2]
     const subject_en = subject_texts[4]
 
@@ -92,6 +93,10 @@ async function getAssignments() {
     }
 
     return assignments
+}
+
+function getSubjectTexts() {
+    return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
 }
 
 function injectAssignmentTable(assignments) {
