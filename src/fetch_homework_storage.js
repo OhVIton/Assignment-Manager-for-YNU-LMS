@@ -1,123 +1,238 @@
 // fetch_homework_storage.js
 // Fetch homework to submit or resubmit
 
-var homework_list = []
+/* main */
+(async () => {
+    setTextLanguage()
+    const newAssignments = await getAssignments()
+    saveToStorage(newAssignments)
 
-// Select the specified subject's name from "[HOME] > subject_name_ja[subject_name_en][subject_id]"
-//var subject_name = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[.*\])/)[2] // subject_name_ja[subject_name_en]
+    // show assignments from storage
+    const lecid = getLectureID()
+    chrome.storage.sync.get(lecid, (data) => {
+        if (data[lecid]){
+            injectAssignmentTable(data[lecid])
+        } else {
+            saveToStorage(newAssignments)
+            injectAssignmentTable(newAssignments)
+        }
+    })
 
-var LANGUAGE = document.querySelector("#langList > option[selected]").textContent
-var subject_name = ''
-var subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
-
-if (LANGUAGE == 'English')
-    subject_name = subject_texts[4]
-else if (LANGUAGE == '日本語')
-    subject_name = subject_texts[2]
-
-var ASSIGNMENT_FOR_THIS_LECTURE_TXT
-var ASSIGNMENT_TXT
-var DEADLINE_TXT
-
-if(LANGUAGE == 'English') {
-    ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignment for ' + subject_name
-    ASSIGNMENT_TXT = 'Assignment'
-    DEADLINE_TXT = 'DEADLINE'
-} else {
-    ASSIGNMENT_FOR_THIS_LECTURE_TXT = subject_name + `の課題一覧`
-    ASSIGNMENT_TXT = '課題名'
-    DEADLINE_TXT = '提出期限'
-}
+})();
 
 
-
-var homework_date = document.querySelectorAll("tbody > tr > td.td03")
-
-for (let i = 0; i < homework_date.length; i++) {
-    var regex
-    var available_txt
-    if (LANGUAGE == "English") {
-        regex = /(Submission Due on|Resubmission deadline|Response Due on|Activity Due on):(.*)/
-        available_txt = 'Available'
-    }
-    else if (LANGUAGE == "日本語") {
-        regex = /(提出期限|再提出期限|回答期限|未実施):(.*)/
-        available_txt = '公開中'
-    }
-
-    var is_due = homework_date[i].textContent.match(regex);
-    var is_available = homework_date[i].parentElement.querySelector("td.td02").textContent.trim() == available_txt
-    if (is_due && is_available) {
-
-        var due_date = is_due[2]
-        var homework = new Map()
-        var homework_id = homework_date[i].parentElement.querySelector("td.td01").id
-        var homework_name = homework_date[i].parentElement.querySelector("td.td01").textContent.trim()
-
-        homework.set("ID", homework_id)
-        homework.set("Subject", subject_name)
-        homework.set("Name", homework_name)
-        homework.set("Due", new Date(due_date))
-        homework_list.push(homework)
+function setTextLanguage() {
+    LANGUAGE = document.querySelector("#langList > option[selected]").textContent
+    if(LANGUAGE == 'English') {
+        ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignments'
+        ASSIGNMENT_TXT = 'Assignment'
+        DEADLINE_TXT = 'DEADLINE'
+        APPLY_TXT = 'Apply'
+        HIDE_TXT = 'Hide'
+    } else {
+        ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
+        ASSIGNMENT_TXT = '課題名'
+        DEADLINE_TXT = '提出期限'
+        APPLY_TXT = '適用'
+        HIDE_TXT = '非表示'
     }
 }
 
-var banner = `
-<div id=\"title\">
-<h2>${ASSIGNMENT_FOR_THIS_LECTURE_TXT}<span>
-<img src=\"/lms/img/cs/yazi3.gif\">
-</h2></div>
-`
+async function getAssignments() {
+    class Assignment {
+        constructor(id, subject_ja, subject_en, name, due) {
+            this.id = id
+            this.subject_ja = subject_ja
+            this.subject_en = subject_en
+            this.name = name
+            this.due = due.toJSON()
+            this.isHide = false
+        }
+    }
+    
 
-
-var table_header = `
-<div id="list_block">
-<table border="0" cellpadding="0" cellspacing="0" class="cs_table2">
-  <tbody><tr>
-    <th width="37%">${ASSIGNMENT_TXT}</th>
-    <th width="10%">${DEADLINE_TXT}</th>
-  </tr>
-`
-
-var table_footer = `
-</tbody></table>
-<div class="cs_flmenuvox clearfix">
-</div>
-
-</div>
-`
-
-var content = ''
-if (homework_list.length) {
-    console.log(homework_list)
-    homework_list.forEach(homework => {
-        const icon = (hw_type) => {
-            if (hw_type == "REP") {
-                return "https://lms.ynu.ac.jp/lms/img/cs/icon2b.gif"
+    const lecid = getLectureID()
+    let assignments = []
+    chrome.storage.sync.get(null, (data) => {
+        console.log(data)
+        let idsInStorage = []
+        /*
+        console.log(idsInStorage)
+        if(data[lecid]) {
+            for (const d of data[lecid]) {
+                idsInStorage.push(d['id'])
             }
-            else if (hw_type == "ANK") {
-                return "https://lms.ynu.ac.jp/lms/img/cs/icon7b.gif"
+        */
+        
+
+        const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
+
+        let subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
+        const subject_ja = subject_texts[2]
+        const subject_en = subject_texts[4]
+        
+        for (const dateElem of assignmentDateElems) {
+            let regex
+            let availableText
+            if (LANGUAGE == "English") {
+                regex = /(Submission Due on|Resubmission deadline|Response Due on|Activity Due on):(.*)/
+                availableText = 'Available'
             }
-            else if (hw_type == "TES") {
-                return "https://lms.ynu.ac.jp/lms/img/cs/icon3b.gif"
+            else if (LANGUAGE == "日本語") {
+                regex = /(提出期限|再提出期限|回答期限|未実施):(.*)/
+                availableText = '公開中'
             }
-            else {
-                return "https://lms.ynu.ac.jp/lms/img/cs/icon5b.gif"
+
+            let isDue = dateElem.textContent.match(regex);
+            let isAvailable = dateElem.parentElement.querySelector("td.td02").textContent.trim() == availableText
+
+            if (isDue && isAvailable) {
+
+                const id = dateElem.parentElement.querySelector("td.td01").id
+                const name = dateElem.parentElement.querySelector("td.td01").textContent.trim()
+                const dueDate = isDue[2]
+                if (!idsInStorage.includes(id)) {
+                    const assignment = new Assignment(id, subject_ja, subject_en, name, new Date(dueDate))
+                    assignments.push(assignment)
+                }
             }
         }
-        content += `
-        <tr>
-            <td><img src="${icon(homework.get("ID").substring(0, 3))}" alt="Report">
-            <a href="javascript:void(0)" onclick="kyozaiTitleLink('${homework.get("ID")}','02')">${homework.get("Name")}</a>
-            </td>
-            <td align="center">${homework.get("Due").toLocaleDateString()}</a></td>
-        </tr>
-        `
-        var keypair = {}
-        keypair[homework.get('ID')] = [homework.get("Subject"), homework.get("Name"), homework.get("Due").toJSON()]
-        chrome.storage.sync.set(keypair)
+
     })
+
+    return assignments
 }
 
-var target = document.querySelector('div#main')
-target.innerHTML = banner + table_header + content + table_footer + target.innerHTML
+function injectAssignmentTable(assignments) {
+    const BANNER_ICON_URL = '/lms/img/cs/yazi3.gif'
+
+    let bannerElem = document.createElement('div')
+    bannerElem.id = 'title'
+    bannerElem.innerHTML = `
+        <h2>${ASSIGNMENT_FOR_THIS_LECTURE_TXT}
+            <img src=\"${BANNER_ICON_URL}\">
+        </h2>
+    `
+
+    let listBlockElem = document.createElement('div')
+    listBlockElem.id = 'list_block'
+
+    let tableElem = document.createElement('table')
+    tableElem.border = '0'
+    tableElem.cellPadding = '0'
+    tableElem.cellSpacing = '0'
+    tableElem.className = 'cs_table2'
+
+    let tbody = document.createElement('tbody')
+    let columns = document.createElement('tr')
+    columns.innerHTML = `
+        <th width="37%">${ASSIGNMENT_TXT}</th>
+        <th width="10%">${DEADLINE_TXT}</th>
+        <th width="10%">${HIDE_TXT}</th>
+    `
+
+    tbody.appendChild(columns)
+
+    for (const assignment of assignments) {
+        if(!assignment['isHide']) {
+            // name, due, hide
+            let record = document.createElement('tr')
+            
+            // name
+            let nameColumn = document.createElement('td')
+
+            let img = document.createElement('img')
+            img.src = getIconURLFromID(assignment['id'])
+            let a = document.createElement('a')
+            a.href = 'javascript:void(0)'
+            a.setAttribute('onclick', `kyozaiTitleLink('${assignment['id']}','02')`)
+            a.innerText = assignment['name']
+            
+            nameColumn.appendChild(img)
+            nameColumn.appendChild(a)
+
+            // due
+            let dueColumn = document.createElement('td')
+            dueColumn.align = 'center'
+            dueColumn.innerText = new Date(assignment['due']).toLocaleDateString()
+            
+            // hide
+            let hideColumn = document.createElement('td')
+            hideColumn.align = 'center'
+
+            let hideCheckbox = document.createElement('input')
+            hideCheckbox.type = 'checkbox'
+            hideCheckbox.checked = assignment['isHide']
+            hideCheckbox.addEventListener('change', () => {
+                assignment['isHide'] = hideCheckbox.checked
+                console.log(assignment)
+            })
+            hideColumn.appendChild(hideCheckbox)
+
+            record.appendChild(nameColumn)
+            record.appendChild(dueColumn)
+            record.appendChild(hideCheckbox)
+
+            tbody.append(record)
+        }
+
+    }
+
+    let resetButton = document.createElement('button')
+    resetButton.addEventListener('click', () => {
+        for (let assignment of assignments) {
+            assignment['isHide'] = false
+        }
+    })
+
+    tableElem.appendChild(tbody)
+    listBlockElem.appendChild(tableElem)
+    listBlockElem.appendChild(resetButton)
+    listBlockElem.style = 'margin-bottom: 10px'
+    
+    
+    let mainElem = document.querySelector('div#main')
+    mainElem.prepend(listBlockElem)
+    mainElem.prepend(bannerElem)
+}
+
+function getIconURLFromID(hw_name) {
+    if (hw_name.includes("REP")) {
+        return "/lms/img/cs/icon2b.gif"
+    }
+    else if (hw_name.includes("ANK")) {
+        return "/lms/img/cs/icon7b.gif"
+    }
+    else if (hw_name.includes("TES")) {
+        return "/lms/img/cs/icon3b.gif"
+    }
+    else {
+        return "/lms/img/cs/icon5b.gif"
+    }
+}
+
+function getLectureID() {
+    return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(.*)\[(.*)\]/)[2]
+}
+
+function saveToStorage(assignments) {
+    for (const assignment of assignments) {
+        let record = {}
+        record[assignment.id] = assignment
+        console.log(record)
+        chrome.storage.sync.set(record)
+    }
+}
+
+async function LoadIDsFromStorage() {
+    const lecid = getLectureID()
+    chrome.storage.sync.get(lecid, (data) => {
+        let assignmentIds = []
+        if(data[lecid]) {
+            for (const d of data[lecid]) {
+                assignmentIds.push(d['id'])
+            }
+        }
+        return assignmentIds
+    })
+}
