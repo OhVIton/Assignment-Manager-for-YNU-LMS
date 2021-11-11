@@ -7,6 +7,7 @@ module.exports = {
     // show_homework: './src/show_homework.js',
     fetch_homework_storage: './src/fetch_homework_storage.js',
     show_homework_storage: './src/show_homework_storage.js',
+    popup: './src/popup.js',
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -16,6 +17,7 @@ module.exports = {
         { from: 'src/icon16.png' },
         { from: 'src/icon48.png' },
         { from: 'src/icon128.png' },
+        { from: 'src/popup.html' },
       ]
     }),
   ],

@@ -1,22 +1,14 @@
 // fetch_homework_storage.js
 // Fetch homework to submit or resubmit
 
+
 /* main */
 (async () => {
     setTextLanguage()
+
     const newAssignments = await getAssignments()
     saveToStorage(newAssignments)
-
-    // show assignments from storage
-    const lecid = getLectureID()
-    chrome.storage.sync.get(lecid, (data) => {
-        if (data[lecid]){
-            injectAssignmentTable(data[lecid])
-        } else {
-            saveToStorage(newAssignments)
-            injectAssignmentTable(newAssignments)
-        }
-    })
+    injectAssignmentTable(newAssignments)
 
 })();
 
@@ -28,39 +20,47 @@ function setTextLanguage() {
         ASSIGNMENT_TXT = 'Assignment'
         DEADLINE_TXT = 'DEADLINE'
         APPLY_TXT = 'Apply'
-        HIDE_TXT = 'Hide'
     } else {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
         ASSIGNMENT_TXT = '課題名'
         DEADLINE_TXT = '提出期限'
         APPLY_TXT = '適用'
-        HIDE_TXT = '非表示'
+    }
+}
+
+class Assignment {
+    constructor(id, subject_ja, subject_en, name, due, isVisible) {
+        this.id = id
+        this.subject_ja = subject_ja
+        this.subject_en = subject_en
+        this.name = name
+        this.due = due.toJSON()
+        this.isVisible = this.isVisible
     }
 }
 
 async function getAssignments() {
     class Assignment {
-        constructor(id, subject_ja, subject_en, name, due) {
+        constructor(id, subject_ja, subject_en, name, due, isVisible) {
             this.id = id
             this.subject_ja = subject_ja
             this.subject_en = subject_en
             this.name = name
             this.due = due.toJSON()
-            this.isHide = false
+            this.isVisible = isVisible
         }
     }
     
 
     let assignments = []
-    let idsInStorage = await loadIDsFromStorage()
-    console.log(idsInStorage)
+    const idsInStorage = await loadIDsFromStorage()
 
     const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
 
     let subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
     const subject_ja = subject_texts[2]
     const subject_en = subject_texts[4]
-    
+
     for (const dateElem of assignmentDateElems) {
         let regex
         let availableText
@@ -69,7 +69,7 @@ async function getAssignments() {
             availableText = 'Available'
         }
         else if (LANGUAGE == "日本語") {
-            regex = /(提出期限|再提出期限|回答期限|未実施):(.*)/
+            regex = /(提出期限|再提出期限|回答期限|実施期限):(.*)/
             availableText = '公開中'
         }
 
@@ -81,9 +81,12 @@ async function getAssignments() {
             const id = dateElem.parentElement.querySelector("td.td01").id
             const name = dateElem.parentElement.querySelector("td.td01").textContent.trim()
             const dueDate = isDue[2]
+            
             if (!idsInStorage.includes(id)) {
-                const assignment = new Assignment(id, subject_ja, subject_en, name, new Date(dueDate))
+                const assignment = new Assignment(id, subject_ja, subject_en, name, new Date(dueDate), true)
                 assignments.push(assignment)
+            } else {
+                console.log(id + ' is already added')
             }
         }
     }
@@ -116,66 +119,42 @@ function injectAssignmentTable(assignments) {
     columns.innerHTML = `
         <th width="37%">${ASSIGNMENT_TXT}</th>
         <th width="10%">${DEADLINE_TXT}</th>
-        <th width="10%">${HIDE_TXT}</th>
     `
 
     tbody.appendChild(columns)
 
+
     for (const assignment of assignments) {
-        if(!assignment['isHide']) {
-            // name, due, hide
-            let record = document.createElement('tr')
-            
-            // name
-            let nameColumn = document.createElement('td')
+        // name, due
+        let record = document.createElement('tr')
+        
+        // name
+        let nameColumn = document.createElement('td')
 
-            let img = document.createElement('img')
-            img.src = getIconURLFromID(assignment['id'])
-            let a = document.createElement('a')
-            a.href = 'javascript:void(0)'
-            a.setAttribute('onclick', `kyozaiTitleLink('${assignment['id']}','02')`)
-            a.innerText = assignment['name']
-            
-            nameColumn.appendChild(img)
-            nameColumn.appendChild(a)
+        let img = document.createElement('img')
+        img.src = getIconURLFromID(assignment['id'])
+        let a = document.createElement('a')
+        a.href = 'javascript:void(0)'
+        a.setAttribute('onclick', `kyozaiTitleLink('${assignment['id']}','02')`)
+        a.innerText = assignment.name
+        
+        nameColumn.appendChild(img)
+        nameColumn.appendChild(a)
 
-            // due
-            let dueColumn = document.createElement('td')
-            dueColumn.align = 'center'
-            dueColumn.innerText = new Date(assignment['due']).toLocaleDateString()
-            
-            // hide
-            let hideColumn = document.createElement('td')
-            hideColumn.align = 'center'
+        // due
+        let dueColumn = document.createElement('td')
+        dueColumn.align = 'center'
+        dueColumn.innerText = new Date(assignment.due).toLocaleDateString()
+        
 
-            let hideCheckbox = document.createElement('input')
-            hideCheckbox.type = 'checkbox'
-            hideCheckbox.checked = assignment['isHide']
-            hideCheckbox.addEventListener('change', () => {
-                assignment['isHide'] = hideCheckbox.checked
-                console.log(assignment)
-            })
-            hideColumn.appendChild(hideCheckbox)
+        record.appendChild(nameColumn)
+        record.appendChild(dueColumn)
 
-            record.appendChild(nameColumn)
-            record.appendChild(dueColumn)
-            record.appendChild(hideCheckbox)
-
-            tbody.append(record)
-        }
-
+        tbody.append(record)
     }
-
-    let resetButton = document.createElement('button')
-    resetButton.addEventListener('click', () => {
-        for (let assignment of assignments) {
-            assignment['isHide'] = false
-        }
-    })
 
     tableElem.appendChild(tbody)
     listBlockElem.appendChild(tableElem)
-    listBlockElem.appendChild(resetButton)
     listBlockElem.style = 'margin-bottom: 10px'
     
     
@@ -183,6 +162,8 @@ function injectAssignmentTable(assignments) {
     mainElem.prepend(listBlockElem)
     mainElem.prepend(bannerElem)
 }
+
+
 
 function getIconURLFromID(hw_name) {
     if (hw_name.includes("REP")) {
@@ -207,17 +188,15 @@ function saveToStorage(assignments) {
     for (const assignment of assignments) {
         let record = {}
         record[assignment.id] = assignment
-        console.log(record)
         chrome.storage.sync.set(record)
     }
 }
 
 async function loadIDsFromStorage() {
-    const lecid = getLectureID()
     let assignmentIds = []
-    chrome.storage.sync.get(lecid, (data) => {
-        if(data[lecid]) {
-            for (const d of data[lecid]) {
+    chrome.storage.sync.get({'a': 0},(data) => {
+        if(data) {
+            for (const d of Object.values(data)) {
                 assignmentIds.push(d['id'])
             }
         }
