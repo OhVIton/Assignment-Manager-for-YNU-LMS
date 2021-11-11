@@ -51,54 +51,42 @@ async function getAssignments() {
     }
     
 
-    const lecid = getLectureID()
     let assignments = []
-    chrome.storage.sync.get(null, (data) => {
-        console.log(data)
-        let idsInStorage = []
-        /*
-        console.log(idsInStorage)
-        if(data[lecid]) {
-            for (const d of data[lecid]) {
-                idsInStorage.push(d['id'])
-            }
-        */
-        
+    let idsInStorage = await loadIDsFromStorage()
+    console.log(idsInStorage)
 
-        const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
+    const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
 
-        let subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
-        const subject_ja = subject_texts[2]
-        const subject_en = subject_texts[4]
-        
-        for (const dateElem of assignmentDateElems) {
-            let regex
-            let availableText
-            if (LANGUAGE == "English") {
-                regex = /(Submission Due on|Resubmission deadline|Response Due on|Activity Due on):(.*)/
-                availableText = 'Available'
-            }
-            else if (LANGUAGE == "日本語") {
-                regex = /(提出期限|再提出期限|回答期限|未実施):(.*)/
-                availableText = '公開中'
-            }
-
-            let isDue = dateElem.textContent.match(regex);
-            let isAvailable = dateElem.parentElement.querySelector("td.td02").textContent.trim() == availableText
-
-            if (isDue && isAvailable) {
-
-                const id = dateElem.parentElement.querySelector("td.td01").id
-                const name = dateElem.parentElement.querySelector("td.td01").textContent.trim()
-                const dueDate = isDue[2]
-                if (!idsInStorage.includes(id)) {
-                    const assignment = new Assignment(id, subject_ja, subject_en, name, new Date(dueDate))
-                    assignments.push(assignment)
-                }
-            }
+    let subject_texts = document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
+    const subject_ja = subject_texts[2]
+    const subject_en = subject_texts[4]
+    
+    for (const dateElem of assignmentDateElems) {
+        let regex
+        let availableText
+        if (LANGUAGE == "English") {
+            regex = /(Submission Due on|Resubmission deadline|Response Due on|Activity Due on):(.*)/
+            availableText = 'Available'
+        }
+        else if (LANGUAGE == "日本語") {
+            regex = /(提出期限|再提出期限|回答期限|未実施):(.*)/
+            availableText = '公開中'
         }
 
-    })
+        let isDue = dateElem.textContent.match(regex);
+        let isAvailable = dateElem.parentElement.querySelector("td.td02").textContent.trim() == availableText
+
+        if (isDue && isAvailable) {
+
+            const id = dateElem.parentElement.querySelector("td.td01").id
+            const name = dateElem.parentElement.querySelector("td.td01").textContent.trim()
+            const dueDate = isDue[2]
+            if (!idsInStorage.includes(id)) {
+                const assignment = new Assignment(id, subject_ja, subject_en, name, new Date(dueDate))
+                assignments.push(assignment)
+            }
+        }
+    }
 
     return assignments
 }
@@ -224,15 +212,15 @@ function saveToStorage(assignments) {
     }
 }
 
-async function LoadIDsFromStorage() {
+async function loadIDsFromStorage() {
     const lecid = getLectureID()
+    let assignmentIds = []
     chrome.storage.sync.get(lecid, (data) => {
-        let assignmentIds = []
         if(data[lecid]) {
             for (const d of data[lecid]) {
                 assignmentIds.push(d['id'])
             }
         }
-        return assignmentIds
     })
+    return assignmentIds
 }
