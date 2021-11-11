@@ -8,7 +8,9 @@
 
     const newAssignments = await getAssignments()
     saveToStorage(newAssignments)
-    injectAssignmentTable(newAssignments)
+    
+    const assignments = await loadFromStorage()
+    injectAssignmentTable(assignments)
 
 })();
 
@@ -19,12 +21,10 @@ function setTextLanguage() {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignments'
         ASSIGNMENT_TXT = 'Assignment'
         DEADLINE_TXT = 'DEADLINE'
-        APPLY_TXT = 'Apply'
     } else {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
         ASSIGNMENT_TXT = '課題名'
         DEADLINE_TXT = '提出期限'
-        APPLY_TXT = '適用'
     }
 }
 
@@ -123,7 +123,7 @@ function injectAssignmentTable(assignments) {
 
     tbody.appendChild(columns)
 
-
+    assignments.sort((a, b) => new Date(a['due']) - new Date(b['due']))
     for (const assignment of assignments) {
         // name, due
         let record = document.createElement('tr')
@@ -155,7 +155,7 @@ function injectAssignmentTable(assignments) {
 
     tableElem.appendChild(tbody)
     listBlockElem.appendChild(tableElem)
-    listBlockElem.style = 'margin-bottom: 10px'
+    listBlockElem.style = 'margin-bottom: 10px; box-sizing: border-box; height: 200px; overflow-y: auto'
     
     
     let mainElem = document.querySelector('div#main')
@@ -192,14 +192,17 @@ function saveToStorage(assignments) {
     }
 }
 
+async function loadFromStorage() {
+    return new Promise(resolve => {chrome.storage.sync.get(null, (data) => {
+        resolve(Object.values(data))
+    })})
+}
+
 async function loadIDsFromStorage() {
-    let assignmentIds = []
-    chrome.storage.sync.get({'a': 0},(data) => {
-        if(data) {
-            for (const d of Object.values(data)) {
-                assignmentIds.push(d['id'])
-            }
-        }
+    return new Promise(resolve => {
+        chrome.storage.sync.get(null, (data) => {
+            let assignmentIDs = Object.values(data).map(a => a['id'])
+            resolve(assignmentIDs)
+        })
     })
-    return assignmentIds
 }
