@@ -36,7 +36,7 @@ class Assignment {
         this.subject_en = subject_en
         this.name = name
         this.due = due.toJSON()
-        this.isVisible = this.isVisible
+        this.isVisible = isVisible
     }
 }
 
