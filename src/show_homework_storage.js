@@ -56,6 +56,7 @@ function getIconURLFromID(hw_name) {
 
 function injectAssignmentTable() {
     const DISPLAY_LIMIT_DAYS = 21
+    const GAS_TASKAPI_URL = 'https://script.google.com/macros/s/AKfycbwhrSAT5TdlxdOVS0LM4eFIzCUCWvwzoOcMog6RqScX--NjU3-B3YZy3y-JUPLhnJVBjw/exec'
 
     chrome.storage.sync.get(null, (data) => {
         assignments = Object.values(data)
@@ -118,7 +119,8 @@ function injectAssignmentTable() {
                 dueColumn.align = 'center'
 
                 let linkElem = document.createElement('a')
-                linkElem.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${getLanguage() == 'English' ? `${assignment['subject_en']} Assignment` : `${assignment['subject_ja']} 課題` }&details=${assignment['name'] + ' ' + assignment['id'].substring(0, 3)}&dates=${getNowYMDStr(new Date(assignment['due']))}/${getNowYMDStr(new Date(new Date(assignment['due']).getTime() + 86400000))}`
+                // linkElem.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${getLanguage() == 'English' ? `${assignment['subject_en']} Assignment` : `${assignment['subject_ja']} 課題` }&details=${assignment['name'] + ' ' + assignment['id'].substring(0, 3)}&dates=${getNowYMDStr(new Date(assignment['due']))}/${getNowYMDStr(new Date(new Date(assignment['due']).getTime() + 86400000))}`
+                linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() == '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=${assignment['due']}&id=${assignment['id']}`
                 linkElem.target = '_blank'
                 linkElem.rel = 'noopener nonreferrer'
                 linkElem.innerText = new Date(assignment['due']).toLocaleDateString()
