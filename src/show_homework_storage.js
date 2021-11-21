@@ -56,7 +56,7 @@ function getIconURLFromID(hw_name) {
 
 function injectAssignmentTable() {
     const DISPLAY_LIMIT_DAYS = 21
-    const GAS_TASKAPI_URL = 'https://script.google.com/macros/s/AKfycbwhrSAT5TdlxdOVS0LM4eFIzCUCWvwzoOcMog6RqScX--NjU3-B3YZy3y-JUPLhnJVBjw/exec'
+    const GAS_TASKAPI_URL = 'https://script.google.com/macros/s/AKfycbyjshv1r5iPwAEFKwP_70gWM52JWWKx9n-KMYje8fWByTpD18HGvDJ5yrn802j6A48BWw/exec'
 
     chrome.storage.sync.get(null, (data) => {
         assignments = Object.values(data)
