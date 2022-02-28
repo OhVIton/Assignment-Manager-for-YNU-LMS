@@ -10,14 +10,15 @@
     saveToStorage(newAssignments)
     
     const assignments = await loadFromStorage()
-    const curLecName_ja = getSubjectTexts()[2]
-    injectAssignmentTable(assignments.filter(x => x.subject_ja == curLecName_ja))
+    const curLecId = getLectureID()
+    injectAssignmentTable(assignments.filter(x => x.subject_id == curLecId))
 
 })();
 
 
 function setTextLanguage() {
-    LANGUAGE = document.querySelector("#langList > option[selected]").textContent
+    //LANGUAGE = document.querySelector("#langList > option[selected]").textContent
+    LANGUAGE = getLanguage()
     if(LANGUAGE == 'English') {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignments'
         ASSIGNMENT_TXT = 'Assignment'
@@ -28,6 +29,12 @@ function setTextLanguage() {
         DEADLINE_TXT = '提出期限'
     }
 }
+
+function getLanguage() {
+    const LOGOUT_TEXT = document.querySelector("#form-id > div > ul > li.logoutButtonFrame > a").textContent
+    return LOGOUT_TEXT.includes("Logout") ? "English" : "日本語"
+}
+
 
 class Assignment {
     constructor(id, subject_ja, subject_en, name, due, isVisible) {
@@ -42,8 +49,9 @@ class Assignment {
 
 async function getAssignments() {
     class Assignment {
-        constructor(id, subject_ja, subject_en, name, due, isVisible) {
+        constructor(id, subject_id, subject_ja, subject_en, name, due, isVisible) {
             this.id = id
+            this.subject_id = subject_id
             this.subject_ja = subject_ja
             this.subject_en = subject_en
             this.name = name
@@ -52,28 +60,39 @@ async function getAssignments() {
         }
     }
     
+    if (LANGUAGE == "English") {
+        //regex = /(Submission Due on|Resubmission deadline|Response Due on|Activity Due on):(.*)/
+        //availableText = 'Available'
+        unavailableText = 'Unavailable'
+    }
+    else if (LANGUAGE == "日本語") {
+        //regex = /(提出期限|再提出期限|回答期限|実施期限):(.*)/
+        //availableText = '公開中'
+        unavailableText = '公開終了'
+    }
+
+
+    const subject_id = getLectureID()
+    let subject_texts = getSubjectTexts(LANGUAGE)
+    //const subject_ja = subject_texts[2]
+    //const subject_en = subject_texts[4]
+    if (LANGUAGE == "English") {
+        subject_ja = subject_texts
+        subject_en = subject_texts
+    } else {
+        subject_ja = subject_texts[1]
+        subject_en = subject_texts[3]
+    }
+
 
     let assignments = []
     const idsInStorage = await loadIDsFromStorage()
 
-    const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
-
-    let subject_texts = getSubjectTexts()
-    const subject_ja = subject_texts[2]
-    const subject_en = subject_texts[4]
+    //const assignmentDateElems = document.querySelectorAll("tbody > tr > td.td03")
+    const assignmentDateElems = Array.from(document.querySelectorAll('[id^=REP],[id^=ANK],[id^=TES]')).map(x => x.parentElement)
 
     for (const dateElem of assignmentDateElems) {
-        let regex
-        let availableText
-        if (LANGUAGE == "English") {
-            regex = /(Submission Due on|Resubmission deadline|Response Due on|Activity Due on):(.*)/
-            availableText = 'Available'
-        }
-        else if (LANGUAGE == "日本語") {
-            regex = /(提出期限|再提出期限|回答期限|実施期限):(.*)/
-            availableText = '公開中'
-        }
-
+        /*
         let isDue = dateElem.textContent.match(regex);
         let isAvailable = dateElem.parentElement.querySelector("td.td02").textContent.trim() == availableText
 
@@ -90,13 +109,37 @@ async function getAssignments() {
                 console.log(id + ' is already added')
             }
         }
+        */
+        let isDue = !dateElem.textContent.includes(unavailableText);
+        
+        if (isDue) {
+            const id = dateElem.querySelector('td.kyozaititleCell').id
+            const name = dateElem.querySelector('td.kyozaititleCell').textContent.trim().match(/(.*)\n(\s*)(.*)/)[3]
+            const dueDate = dateElem.querySelectorAll('td.jyugyeditCell')[0].textContent.trim()
+
+            
+            if (!idsInStorage.includes(id)) {
+                const assignment = new Assignment(id, subject_id, subject_ja, subject_en, name, new Date(dueDate), true)
+                assignments.push(assignment)
+            } else {
+                console.log(id + ' is already added')
+            }
+        }
     }
 
     return assignments
 }
 
-function getSubjectTexts() {
-    return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
+
+function getSubjectTexts(lang) {
+    //return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
+    if (lang == 'English')
+        return document.querySelector("body > div.base > div.headerContents > div.courseMenu > div.courseName").textContent.trim()
+    else
+        return document.querySelector("body > div.base > div.headerContents > div.courseMenu > div.courseName").textContent.trim().match(/(.*)(\[)(.*)(\])/)
+
+
+
 }
 
 function injectAssignmentTable(assignments) {
@@ -114,9 +157,6 @@ function injectAssignmentTable(assignments) {
     listBlockElem.id = 'list_block'
 
     let tableElem = document.createElement('table')
-    tableElem.border = '0'
-    tableElem.cellPadding = '0'
-    tableElem.cellSpacing = '0'
     tableElem.className = 'cs_table2'
 
     let tbody = document.createElement('tbody')
@@ -149,7 +189,7 @@ function injectAssignmentTable(assignments) {
         // due
         let dueColumn = document.createElement('td')
         dueColumn.align = 'center'
-        dueColumn.innerText = new Date(assignment.due).toLocaleDateString()
+        dueColumn.innerText = new Date(assignment.due).toLocaleString('ja-JP')
         
 
         record.appendChild(nameColumn)
@@ -160,10 +200,11 @@ function injectAssignmentTable(assignments) {
 
     tableElem.appendChild(tbody)
     listBlockElem.appendChild(tableElem)
-    listBlockElem.style = 'margin-bottom: 10px; box-sizing: border-box; height: 200px; overflow-y: auto'
+    listBlockElem.style = 'box-sizing: border-box; height: 100%; max-height: 15rem; margin-bottom: 2rem; overflow-y: auto'
     
     
-    let mainElem = document.querySelector('div#main')
+    //let mainElem = document.querySelector('div#main')
+    let mainElem = document.querySelector('div.contentsColumn')
     mainElem.prepend(listBlockElem)
     mainElem.prepend(bannerElem)
 }
@@ -172,21 +213,26 @@ function injectAssignmentTable(assignments) {
 
 function getIconURLFromID(hw_name) {
     if (hw_name.includes("REP")) {
-        return "/lms/img/cs/icon2b.gif"
+        //return "/lms/img/cs/icon2b.gif"
+        return "/lms/img/pc/material_report_S.png"
     }
     else if (hw_name.includes("ANK")) {
-        return "/lms/img/cs/icon7b.gif"
+        //return "/lms/img/cs/icon7b.gif"
+        return "/lms/img/pc/material_questionnaire_S.png"
     }
     else if (hw_name.includes("TES")) {
-        return "/lms/img/cs/icon3b.gif"
+        //return "/lms/img/cs/icon3b.gif"
+        return "/lms/img/pc/material_exam_S.png"
     }
     else {
-        return "/lms/img/cs/icon5b.gif"
+        //return "/lms/img/cs/icon5b.gif"
+        return "/lms/img/pc/material_study-materials_S.png"
     }
 }
 
 function getLectureID() {
-    return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(.*)\[(.*)\]/)[2]
+    //return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(.*)\[(.*)\]/)[2]
+    return document.querySelector("body > div.base > div.headerContents > div.breadCrumbBar > ul > li.current > a > p").textContent.match(/(.*)\[(.*)\]/)[2]
 }
 
 function saveToStorage(assignments) {

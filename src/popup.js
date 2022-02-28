@@ -8,13 +8,15 @@
 function setTextLanguage() {
     let LANGUAGE = getLanguage()
     if (LANGUAGE == 'English') {
+        CLEAR_TXT = 'Clear all assignments'
         SUBJECT_TXT = 'Lecture'
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignments'
         ASSIGNMENT_TXT = 'Assignment'
         DEADLINE_TXT = 'DEADLINE'
         SHOW_TXT = '表示'
     } else {
-        SUBJECT_TXT = 'Lecture'
+        CLEAR_TXT = '課題全消去'
+        SUBJECT_TXT = '講義'
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
         ASSIGNMENT_TXT = '課題名'
         DEADLINE_TXT = '提出期限'
@@ -23,7 +25,8 @@ function setTextLanguage() {
 }
 
 function getLanguage() {
-    return '日本語'
+    const language = navigator.language
+    return language == 'ja-JP' ? '日本語' : 'English'
 }
 
 
@@ -38,7 +41,16 @@ async function loadFromStorage() {
 
 function injectAssignmentTable(assignments) {
     const DISPLAY_LIMIT_DAYS = 21
-
+    
+    let bannerElem = document.createElement('div')
+    let clearBtn = document.createElement('button')
+    clearBtn.innerText = CLEAR_TXT
+    clearBtn.addEventListener('click', () => {
+        chrome.storage.sync.clear()
+        location.reload()
+    })
+    bannerElem.appendChild(clearBtn)
+    
     let listBlockElem = document.createElement('div')
     listBlockElem.id = 'list_block'
 
@@ -66,8 +78,6 @@ function injectAssignmentTable(assignments) {
 
         for (const assignment of assignments) {
             let daysLeft = (new Date(assignment['due']) - new Date()) / 86400000
-            if (daysLeft > DISPLAY_LIMIT_DAYS)
-                continue
 
             // subject, name, due, show
             let record = document.createElement('tr')
@@ -98,16 +108,18 @@ function injectAssignmentTable(assignments) {
             let showColumn = document.createElement('td')
             showColumn.align = 'center'
             
-            let showCheckbox = document.createElement('input')
-            showCheckbox.checked = assignment['isVisible']
-            showCheckbox.type = 'checkbox'
-            showCheckbox.addEventListener('change', () => {
-                assignment['isVisible'] = showCheckbox.checked
-                var keypair = {}
-                keypair[assignment['id']] = assignment
-                chrome.storage.sync.set(keypair)
-            })
-            showColumn.appendChild(showCheckbox)
+            if (daysLeft < DISPLAY_LIMIT_DAYS) {
+                let showCheckbox = document.createElement('input')
+                showCheckbox.checked = assignment['isVisible']
+                showCheckbox.type = 'checkbox'
+                showCheckbox.addEventListener('change', () => {
+                    assignment['isVisible'] = showCheckbox.checked
+                    var keypair = {}
+                    keypair[assignment['id']] = assignment
+                    chrome.storage.sync.set(keypair)
+                })
+                showColumn.appendChild(showCheckbox)
+            }
 
 
             record.appendChild(subjectColumn)
@@ -123,5 +135,6 @@ function injectAssignmentTable(assignments) {
     listBlockElem.appendChild(tableElem)
     listBlockElem.style = 'margin-bottom: 10px; box-sizing: border-box; width: 600px; height: 300px; overflow-y: auto'
     
+    document.body.appendChild(bannerElem)
     document.body.appendChild(listBlockElem)
 }

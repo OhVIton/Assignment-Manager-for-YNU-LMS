@@ -9,7 +9,8 @@
 })()
 
 function getLanguage() {
-    return document.querySelector("#langList > option[selected]").textContent
+    const LOGOUT_TEXT = document.querySelector("#form-id > div > ul > li.logoutButtonFrame > a").textContent
+    return LOGOUT_TEXT.includes("Logout") ? "English" : "日本語"
 }
 
 function setTextLanguage() {
@@ -41,16 +42,20 @@ function getAssignmentsFromStorage() {
 
 function getIconURLFromID(hw_name) {
     if (hw_name.includes("REP")) {
-        return "/lms/img/cs/icon2b.gif"
+        //return "/lms/img/cs/icon2b.gif"
+        return "/lms/img/pc/material_report_S.png"
     }
     else if (hw_name.includes("ANK")) {
-        return "/lms/img/cs/icon7b.gif"
+        //return "/lms/img/cs/icon7b.gif"
+        return "/lms/img/pc/material_questionnaire_S.png"
     }
     else if (hw_name.includes("TES")) {
-        return "/lms/img/cs/icon3b.gif"
+        //return "/lms/img/cs/icon3b.gif"
+        return "/lms/img/pc/material_exam_S.png"
     }
     else {
-        return "/lms/img/cs/icon5b.gif"
+        //return "/lms/img/cs/icon5b.gif"
+        return "/lms/img/pc/material_study-materials_S.png"
     }
 }
 
@@ -64,16 +69,15 @@ function injectAssignmentTable() {
         assignments.sort((a, b) => new Date(a['due']) - new Date(b['due']))
 
         let bannerElem = document.createElement('div')
-        bannerElem.id = 'title'
-        bannerElem.innerHTML = `<h2>${ASSIGNMENTS_TXT}</h2>`
+        bannerElem.innerText = ' ' + ASSIGNMENTS_TXT + ': ' + assignments.length
+        bannerElem.style = 'font-weight: bold'
+        bannerElem.className = 'cpLabel blue'
 
         let listBlockElem = document.createElement('div')
         listBlockElem.id = 'list_block'
+        listBlockElem.style = 'box-sizing: border-box; height: 100%; max-height: 15rem; overflow-y: auto'
 
         let tableElem = document.createElement('table')
-        tableElem.border = '0'
-        tableElem.cellPadding = '0'
-        tableElem.cellSpacing = '0'
         tableElem.className = 'cs_table2'
 
         let tbody = document.createElement('tbody')
@@ -123,7 +127,15 @@ function injectAssignmentTable() {
                 linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() == '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=${assignment['due']}&id=${assignment['id']}`
                 linkElem.target = '_blank'
                 linkElem.rel = 'noopener nonreferrer'
-                linkElem.innerText = new Date(assignment['due']).toLocaleDateString()
+                linkElem.innerText = new Date(assignment['due']).toLocaleString('ja-JP')
+                if (daysLeft < 0) {
+                    linkElem.style = 'color: gray'
+                } else if (daysLeft < 1) {
+                    linkElem.style = 'color: red'
+                }
+                else if (daysLeft < 2) {
+                    linkElem.style = 'color: #F6AA00'
+                }
 
                 dueColumn.appendChild(linkElem)
 
@@ -146,16 +158,18 @@ function injectAssignmentTable() {
                 record.appendChild(nameColumn)
                 record.appendChild(dueColumn)
                 record.appendChild(removeColumn)
+                
 
                 tbody.append(record)
+
             }
         }
 
         tableElem.appendChild(tbody)
         listBlockElem.appendChild(tableElem)
-        listBlockElem.style = 'margin-bottom: 10px;'
+        listBlockElem.style.marginBottom = '2rem'
 
-        let mainElem = document.querySelector('div#main')
+        let mainElem = document.querySelector('form#homeHomlForm')
         mainElem.prepend(listBlockElem)
         mainElem.prepend(bannerElem)
     })
