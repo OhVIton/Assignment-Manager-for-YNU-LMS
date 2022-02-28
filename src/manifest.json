@@ -16,7 +16,9 @@
   "content_scripts": [
     {
       "matches": [
-        "https://lms.ynu.ac.jp/lms/homeHoml/doIndex*"
+        "https://lms.ynu.ac.jp/lms/homeHoml/doIndex*",
+        "https://lms.ynu.ac.jp/lms/tpicTpil/doBack*",
+        "https://lms.ynu.ac.jp/lms/infrInfr/doBack*"
       ],
       "js": [
         "show_homework_storage.js"
