@@ -119,6 +119,11 @@ function injectAssignmentTable(assignments) {
                     chrome.storage.sync.set(keypair)
                 })
                 showColumn.appendChild(showCheckbox)
+            } else {
+                let hideText = document.createElement('td')
+                hideText.align = 'center'
+                hideText.innerText = '-'
+                showColumn.appendChild(hideText)
             }
 
 
