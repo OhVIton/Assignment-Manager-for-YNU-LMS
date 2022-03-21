@@ -76,12 +76,12 @@ async function getAssignments() {
     let subject_texts = getSubjectTexts(LANGUAGE)
     //const subject_ja = subject_texts[2]
     //const subject_en = subject_texts[4]
-    if (subject_texts instanceof Array) {
-        subject_ja = subject_texts[1]
-        subject_en = subject_texts[3]
-    } else  {
+    if (LANGUAGE == "English") {
         subject_ja = subject_texts
         subject_en = subject_texts
+    } else {
+        subject_ja = subject_texts[1]
+        subject_en = subject_texts[3]
     }
 
 
@@ -135,13 +135,8 @@ function getSubjectTexts(lang) {
     //return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(\>\s)(.*)(\[)(.*)(\])(\[.*\])/)
     if (lang == 'English')
         return document.querySelector("body > div.base > div.headerContents > div.courseMenu > div.courseName").textContent.trim()
-    else {
-        let elem = document.querySelector("body > div.base > div.headerContents > div.courseMenu > div.courseName").textContent.trim().match(/(.*)(\[)(.*)(\])/)
-        if (elem != null && elem.length > 4) {
-            return elem
-        }
-        return document.querySelector("body > div.base > div.headerContents > div.courseMenu > div.courseName").textContent.trim()
-    }
+    else
+        return document.querySelector("body > div.base > div.headerContents > div.courseMenu > div.courseName").textContent.trim().match(/(.*)(\[)(.*)(\])/)
 
 
 
