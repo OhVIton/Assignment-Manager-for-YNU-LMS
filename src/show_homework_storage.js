@@ -61,16 +61,14 @@ function getIconURLFromID(hw_name) {
 
 function injectAssignmentTable() {
     const DISPLAY_LIMIT_DAYS = 21
+    const GAS_TASKAPI_URL = 'https://script.google.com/macros/s/AKfycbxOkCMKIeXHZPxkVHZbQDlU6ezRRljwJdypjI9B4qA2l3oZqfgtxOzDr6jY1PoN9rTa6Q/exec'
+    let inDleftCnt = 0
 
     chrome.storage.sync.get(null, (data) => {
         assignments = Object.values(data)
         // Cannot sort items outside chrome.storage.sync.get
         assignments.sort((a, b) => new Date(a['due']) - new Date(b['due']))
 
-        let bannerElem = document.createElement('div')
-        bannerElem.innerText = ' ' + ASSIGNMENTS_TXT + ': ' + assignments.length
-        bannerElem.style = 'font-weight: bold'
-        bannerElem.className = 'cpLabel blue'
 
         let listBlockElem = document.createElement('div')
         listBlockElem.id = 'list_block'
@@ -94,6 +92,7 @@ function injectAssignmentTable() {
         for (const assignment of assignments) {
             let daysLeft = (new Date(assignment['due']) - new Date()) / 86400000
             if (daysLeft < DISPLAY_LIMIT_DAYS && assignment['isVisible']) {
+                inDleftCnt++
                 // subject, name, due, remove
                 let record = document.createElement('tr')
 
@@ -122,7 +121,9 @@ function injectAssignmentTable() {
                 dueColumn.align = 'center'
 
                 let linkElem = document.createElement('a')
-                linkElem.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${getLanguage() == 'English' ? `${assignment['subject_en']} Assignment` : `${assignment['subject_ja']} 課題` }&details=${assignment['name'] + ' ' + assignment['id'].substring(0, 3)}&dates=${getNowYMDStr(new Date(assignment['due']))}/${getNowYMDStr(new Date(new Date(assignment['due']).getTime() + 86400000))}`
+                // linkElem.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${getLanguage() == 'English' ? `${assignment['subject_en']} Assignment` : `${assignment['subject_ja']} 課題` }&details=${assignment['name'] + ' ' + assignment['id'].substring(0, 3)}&dates=${getNowYMDStr(new Date(assignment['due']))}/${getNowYMDStr(new Date(new Date(assignment['due']).getTime() + 86400000))}`
+                linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() == '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=${new Date(new Date(assignment['due']).getTime() - new Date(assignment['due']).getTimezoneOffset() * 60 * 1000).toJSON() }&id=${assignment['id']}`
+
                 linkElem.target = '_blank'
                 linkElem.rel = 'noopener nonreferrer'
                 linkElem.innerText = new Date(assignment['due']).toLocaleString('ja-JP')
@@ -169,6 +170,11 @@ function injectAssignmentTable() {
 
         let mainElem = document.querySelector('form#homeHomlForm')
         mainElem.prepend(listBlockElem)
+
+        let bannerElem = document.createElement('div')
+        bannerElem.innerText = ' ' + ASSIGNMENTS_TXT + ': ' + inDleftCnt + '  (+' + (assignments.length - inDleftCnt) + ')'
+        bannerElem.style = 'font-weight: bold'
+        bannerElem.className = 'cpLabel blue'
         mainElem.prepend(bannerElem)
     })
 }

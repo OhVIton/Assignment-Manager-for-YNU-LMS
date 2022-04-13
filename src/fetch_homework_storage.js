@@ -23,10 +23,14 @@ function setTextLanguage() {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignments'
         ASSIGNMENT_TXT = 'Assignment'
         DEADLINE_TXT = 'DEADLINE'
+        NOT_VIEWED_TXT = 'Not viewed'
+        NOT_SUBMITTED_TXT = 'Not submitted'
     } else {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
         ASSIGNMENT_TXT = '課題名'
         DEADLINE_TXT = '提出期限'
+        NOT_VIEWED_TXT = '未参照'
+        NOT_SUBMITTED_TXT = '未提出'
     }
 }
 
@@ -110,9 +114,10 @@ async function getAssignments() {
             }
         }
         */
+        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT
         let isDue = !dateElem.textContent.includes(unavailableText);
         
-        if (isDue) {
+        if (isDue && isNotSubmitted) {
             const id = dateElem.querySelector('td.kyozaititleCell').id
             const name = dateElem.querySelector('td.kyozaititleCell').textContent.trim().match(/(.*)\n(\s*)(.*)/)[3]
             const dueDate = dateElem.querySelectorAll('td.jyugyeditCell')[0].textContent.trim()
