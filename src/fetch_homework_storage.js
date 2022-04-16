@@ -23,6 +23,7 @@ function setTextLanguage() {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = 'Assignments'
         ASSIGNMENT_TXT = 'Assignment'
         DEADLINE_TXT = 'DEADLINE'
+        NOT_EXECUTED_TXT = 'Not executed'
         NOT_VIEWED_TXT = 'Not viewed'
         NOT_SUBMITTED_TXT = 'Not submitted'
     } else {
@@ -31,6 +32,7 @@ function setTextLanguage() {
         DEADLINE_TXT = '提出期限'
         NOT_VIEWED_TXT = '未参照'
         NOT_SUBMITTED_TXT = '未提出'
+        NOT_EXECUTED_TXT = '未実施'
     }
 }
 
@@ -114,7 +116,7 @@ async function getAssignments() {
             }
         }
         */
-        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT
+        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_EXECUTED_TXT
         let isDue = !dateElem.textContent.includes(unavailableText);
         
         if (isDue && isNotSubmitted) {
@@ -199,7 +201,11 @@ function injectAssignmentTable(assignments) {
         // due
         let dueColumn = document.createElement('td')
         dueColumn.align = 'center'
-        dueColumn.innerText = new Date(assignment.due).toLocaleString('ja-JP')
+        if (assignment.due) {
+            dueColumn.innerText = new Date(assignment.due).toLocaleString('ja-JP')
+        } else {
+            dueColumn.innerText = '-'
+        }
         
 
         record.appendChild(nameColumn)
@@ -242,7 +248,11 @@ function getIconURLFromID(hw_name) {
 
 function getLectureID() {
     //return document.querySelector("#cs_loginInfo_left ul li:not(#home)").textContent.match(/(.*)\[(.*)\]/)[2]
-    return document.querySelector("body > div.base > div.headerContents > div.breadCrumbBar > ul > li.current > a > p").textContent.match(/(.*)\[(.*)\]/)[2]
+    let subjectNameElem = document.querySelector("body > div.base > div.headerContents > div.breadCrumbBar > ul > li.current > a > p").textContent.match(/(.*)\[(.*)\]/)
+    if (subjectNameElem != null && subjectNameElem.length > 2) 
+        return document.querySelector("body > div.base > div.headerContents > div.breadCrumbBar > ul > li.current > a > p").textContent.match(/(.*)\[(.*)\]/)[2]
+    else
+        return 'AAA1234' 
 }
 
 function saveToStorage(assignments) {

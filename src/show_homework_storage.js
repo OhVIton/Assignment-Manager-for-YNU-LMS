@@ -121,7 +121,6 @@ function injectAssignmentTable() {
                 dueColumn.align = 'center'
 
                 let linkElem = document.createElement('a')
-                // linkElem.href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${getLanguage() == 'English' ? `${assignment['subject_en']} Assignment` : `${assignment['subject_ja']} 課題` }&details=${assignment['name'] + ' ' + assignment['id'].substring(0, 3)}&dates=${getNowYMDStr(new Date(assignment['due']))}/${getNowYMDStr(new Date(new Date(assignment['due']).getTime() + 86400000))}`
                 if (assignment['due']) {
                     linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() === '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=${new Date(new Date(assignment['due']).getTime() - new Date(assignment['due']).getTimezoneOffset() * 60 * 1000).toJSON()}&id=${assignment['id']}`
                     linkElem.innerText = new Date(assignment['due']).toLocaleString('ja-JP')
@@ -134,7 +133,7 @@ function injectAssignmentTable() {
                     }
                 } else {
                     linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() === '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=&id=${assignment['id']}`
-                    linkElem.innerText = '提出期限なし'
+                    linkElem.innerText = '-'
                 }
                 linkElem.target = '_blank'
                 linkElem.rel = 'noopener nonreferrer'

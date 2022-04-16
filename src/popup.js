@@ -41,8 +41,6 @@ async function loadFromStorage() {
 
 function injectAssignmentTable(assignments) {
     const DISPLAY_LIMIT_DAYS = 21
-    const AZURE_CLIENT_ID = '53848be7-1a7c-4acf-bafa-476e45bd0863'
-    const LOGIN_URL = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${AZURE_CLIENT_ID}&response_type=code&response_mode=query&scope=openid%20offline_access%20https%3A%2F%2Fgraph.microsoft.com%2Ftasks.readwrite&state=12345`
 
     
     let bannerElem = document.createElement('div')
@@ -105,7 +103,10 @@ function injectAssignmentTable(assignments) {
             // due
             let dueColumn = document.createElement('td')
             dueColumn.align = 'center'
-            dueColumn.innerText = new Date(assignment.due).toLocaleString('ja-JP')
+            if (assignment.due)
+                dueColumn.innerText = new Date(assignment.due).toLocaleString('ja-JP')
+            else
+                dueColumn.innerText = '-'
 
             // show
             let showColumn = document.createElement('td')
@@ -128,6 +129,14 @@ function injectAssignmentTable(assignments) {
                 hideText.innerText = '-'
                 showColumn.appendChild(hideText)
             }
+
+            let removeButton = document.createElement('button')
+            removeButton.innerText = '🗑'
+            removeButton.addEventListener('click', () => {
+                chrome.storage.sync.remove(assignment['id'], () => {
+                    removeButton.parentElement.innerHTML = `<p>'Removed'</p>`
+            })})
+            showColumn.appendChild(removeButton)
 
 
             record.appendChild(subjectColumn)
