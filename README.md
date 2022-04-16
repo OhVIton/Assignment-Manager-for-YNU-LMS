@@ -6,7 +6,7 @@
   
 DOM操作(データ取得)は講義ページに**手動でアクセスした時のみ**なので、サーバーに大きな負荷をかけることなく課題管理が可能です。  
   
-[クソデカ未提出](https://github.com/OhVIton/BigBigNotSubmitted-CP)とも共存可能です。
+Wildlifeとかと組み合わせて使うなよ！？
   
   
 **[Chrome Web Store](https://chrome.google.com/webstore/detail/assignment-manager-for-yn/bhdmcaoeabelekcckcmjapokiffkoiam?hl=ja&authuser=0) からインストールできます**  
