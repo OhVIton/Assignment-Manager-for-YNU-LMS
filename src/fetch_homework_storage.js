@@ -27,6 +27,7 @@ function setTextLanguage() {
         NOT_VIEWED_TXT = 'Not viewed'
         NOT_SUBMITTED_TXT = 'Not submitted'
         NOT_RESPONDED_TXT = 'Not responded'
+        RESUBMISSION_TXT = 'Resubmission'
     } else {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
         ASSIGNMENT_TXT = '課題名'
@@ -35,6 +36,7 @@ function setTextLanguage() {
         NOT_SUBMITTED_TXT = '未提出'
         NOT_EXECUTED_TXT = '未実施'
         NOT_RESPONDED_TXT = '未回答'
+        RESUBMISSION_TXT = '再提出'
     }
 }
 
@@ -118,7 +120,7 @@ async function getAssignments() {
             }
         }
         */
-        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_EXECUTED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_RESPONDED_TXT
+        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_EXECUTED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_RESPONDED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == RESUBMISSION_TXT
         let isDue = !dateElem.textContent.includes(unavailableText);
         
         if (isDue && isNotSubmitted) {
