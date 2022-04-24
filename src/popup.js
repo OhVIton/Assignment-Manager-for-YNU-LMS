@@ -67,7 +67,7 @@ function injectAssignmentTable(assignments) {
         <th width="20%">${SUBJECT_TXT}</th>
         <th width="37%">${ASSIGNMENT_TXT}</th>
         <th width="10%">${DEADLINE_TXT}</th>
-        <th width="10%">${SHOW_TXT}</th>
+        <th width="12%">${SHOW_TXT}</th>
     `
 
     tbody.appendChild(columns)
@@ -106,7 +106,7 @@ function injectAssignmentTable(assignments) {
             if (assignment.due)
                 dueColumn.innerText = new Date(assignment.due).toLocaleString('ja-JP')
             else
-                dueColumn.innerText = '-'
+                dueColumn.innerText = ' - '
 
             // show
             let showColumn = document.createElement('td')

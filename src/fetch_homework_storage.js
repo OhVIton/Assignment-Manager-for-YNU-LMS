@@ -26,6 +26,7 @@ function setTextLanguage() {
         NOT_EXECUTED_TXT = 'Not executed'
         NOT_VIEWED_TXT = 'Not viewed'
         NOT_SUBMITTED_TXT = 'Not submitted'
+        NOT_RESPONDED_TXT = 'Not responded'
     } else {
         ASSIGNMENT_FOR_THIS_LECTURE_TXT = '課題'
         ASSIGNMENT_TXT = '課題名'
@@ -33,6 +34,7 @@ function setTextLanguage() {
         NOT_VIEWED_TXT = '未参照'
         NOT_SUBMITTED_TXT = '未提出'
         NOT_EXECUTED_TXT = '未実施'
+        NOT_RESPONDED_TXT = '未回答'
     }
 }
 
@@ -116,17 +118,17 @@ async function getAssignments() {
             }
         }
         */
-        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_EXECUTED_TXT
+        let isNotSubmitted = dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_SUBMITTED_TXT  | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_VIEWED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_EXECUTED_TXT | dateElem.querySelector('td.jyugyeditCell > span').textContent == NOT_RESPONDED_TXT
         let isDue = !dateElem.textContent.includes(unavailableText);
         
         if (isDue && isNotSubmitted) {
             const id = dateElem.querySelector('td.kyozaititleCell').id
             const name = dateElem.querySelector('td.kyozaititleCell').textContent.trim().match(/(.*)\n(\s*)(.*)/)[3]
-            const dueDate = dateElem.querySelectorAll('td.jyugyeditCell')[0].textContent.trim()
+            const dueDate = new Date(dateElem.querySelectorAll('td.jyugyeditCell')[0].textContent.trim())
+            dueDate.setSeconds(dueDate.getSeconds() - 1)
 
-            
             if (!idsInStorage.includes(id)) {
-                const assignment = new Assignment(id, subject_id, subject_ja, subject_en, name, new Date(dueDate), true)
+                const assignment = new Assignment(id, subject_id, subject_ja, subject_en, name, dueDate, true)
                 assignments.push(assignment)
             } else {
                 console.log(id + ' is already added')

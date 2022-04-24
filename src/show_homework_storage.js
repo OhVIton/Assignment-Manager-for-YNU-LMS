@@ -82,7 +82,7 @@ function injectAssignmentTable() {
         columns.innerHTML = `
         <th width="20%">${LECTURE_TXT}</th>
         <th width="37%">${ASSIGNMENT_TXT}</th>
-        <th width="10%">${DEADLINE_TXT}</th>
+        <th width="12%">${DEADLINE_TXT}</th>
         <th width="10%">${ACTION_TXT}</th>
       </tr>
         `
