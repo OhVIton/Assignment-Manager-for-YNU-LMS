@@ -143,6 +143,7 @@ function injectAssignmentTable() {
                 linkElem.target = '_blank'
                 linkElem.rel = 'noopener nonreferrer'
                 dueColumn.appendChild(linkElem)
+                dueColumn.style.textAlign = 'center'
 
 
                 // remove

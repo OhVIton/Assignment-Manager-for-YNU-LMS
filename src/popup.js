@@ -112,23 +112,16 @@ function injectAssignmentTable(assignments) {
             let showColumn = document.createElement('td')
             showColumn.align = 'center'
             
-            if (daysLeft < DISPLAY_LIMIT_DAYS) {
-                let showCheckbox = document.createElement('input')
-                showCheckbox.checked = assignment['isVisible']
-                showCheckbox.type = 'checkbox'
-                showCheckbox.addEventListener('change', () => {
-                    assignment['isVisible'] = showCheckbox.checked
-                    var keypair = {}
-                    keypair[assignment['id']] = assignment
-                    chrome.storage.sync.set(keypair)
-                })
-                showColumn.appendChild(showCheckbox)
-            } else {
-                let hideText = document.createElement('td')
-                hideText.align = 'center'
-                hideText.innerText = '-'
-                showColumn.appendChild(hideText)
-            }
+            let showCheckbox = document.createElement('input')
+            showCheckbox.checked = assignment['isVisible']
+            showCheckbox.type = 'checkbox'
+            showCheckbox.addEventListener('change', () => {
+                assignment['isVisible'] = showCheckbox.checked
+                var keypair = {}
+                keypair[assignment['id']] = assignment
+                chrome.storage.sync.set(keypair)
+            })
+            showColumn.appendChild(showCheckbox)
 
             let removeButton = document.createElement('button')
             removeButton.innerText = '🗑'
