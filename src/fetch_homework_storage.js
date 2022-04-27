@@ -1,6 +1,12 @@
 // fetch_homework_storage.js
 // Fetch homework to submit or resubmit
 
+const A_TYPE = {
+    other: 1,
+    report: 2,
+    test: 3,
+    questionnaire: 4,
+};
 
 /* main */
 (async () => {
@@ -196,7 +202,7 @@ function injectAssignmentTable(assignments) {
         img.src = getIconURLFromID(assignment['id'])
         let a = document.createElement('a')
         a.href = 'javascript:void(0)'
-        a.setAttribute('onclick', `kyozaiTitleLink('${assignment['id']}','02')`)
+        a.setAttribute('onclick', `kyozaiTitleLink('${assignment['id']}','0${checkAssignmentType(assignment['id'])}')`)
         a.innerText = assignment.name
         
         nameColumn.appendChild(img)
@@ -232,15 +238,16 @@ function injectAssignmentTable(assignments) {
 
 
 function getIconURLFromID(hw_name) {
-    if (hw_name.includes("REP")) {
+    const type = checkAssignmentType(hw_name)
+    if (type == A_TYPE.report) {
         //return "/lms/img/cs/icon2b.gif"
         return "/lms/img/pc/material_report_S.png"
     }
-    else if (hw_name.includes("ANK")) {
+    else if (type == A_TYPE.questionnaire) {
         //return "/lms/img/cs/icon7b.gif"
         return "/lms/img/pc/material_questionnaire_S.png"
     }
-    else if (hw_name.includes("TES")) {
+    else if (type == A_TYPE.test) {
         //return "/lms/img/cs/icon3b.gif"
         return "/lms/img/pc/material_exam_S.png"
     }
@@ -248,6 +255,26 @@ function getIconURLFromID(hw_name) {
         //return "/lms/img/cs/icon5b.gif"
         return "/lms/img/pc/material_study-materials_S.png"
     }
+}
+
+function checkAssignmentType(id) {
+    if (id.includes("REP")) {
+        //return "/lms/img/cs/icon2b.gif"
+        return A_TYPE.report
+    }
+    else if (id.includes("ANK")) {
+        //return "/lms/img/cs/icon7b.gif"
+        return A_TYPE.questionnaire
+    }
+    else if (id.includes("TES")) {
+        //return "/lms/img/cs/icon3b.gif"
+        return A_TYPE.test
+    }
+    else {
+        //return "/lms/img/cs/icon5b.gif"
+        return A_TYPE.other
+    }
+
 }
 
 function getLectureID() {
