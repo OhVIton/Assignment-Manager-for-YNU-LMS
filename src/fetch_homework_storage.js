@@ -166,6 +166,7 @@ function getSubjectTexts(lang) {
 
 function injectAssignmentTable(assignments) {
     const BANNER_ICON_URL = '/lms/img/cs/yazi3.gif'
+    
 
     let bannerElem = document.createElement('div')
     bannerElem.id = 'title'

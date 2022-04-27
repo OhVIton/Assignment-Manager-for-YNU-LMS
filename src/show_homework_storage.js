@@ -69,6 +69,7 @@ function injectAssignmentTable() {
         // Cannot sort items outside chrome.storage.sync.get
         assignments.sort((a, b) => new Date(a['due']) - new Date(b['due']))
 
+        const lectureURIElems = Array.from(document.querySelectorAll("[onclick^=formSubmit]"))
 
         let listBlockElem = document.createElement('div')
         listBlockElem.id = 'list_block'
@@ -105,8 +106,13 @@ function injectAssignmentTable() {
                 let subjectColumn = document.createElement('td')
 
                 let subjectElem = document.createElement('p')
-                console.log(assignment)
+                if (lectureURIElems.filter(x => x.parentElement.textContent.includes(assignment['subject_en'])).length) {
+                    subjectElem = document.createElement('a')
+                    subjectElem.href = 'javascript:void(0)'
+                    subjectElem.setAttribute('onclick', lectureURIElems.filter(x => x.parentElement.textContent.includes(assignment['subject_en']))[0].getAttribute('onclick'))
+                }
                 subjectElem.innerText = getLanguage() == 'English' ? assignment['subject_en'] : assignment['subject_ja']
+                console.log(assignment)
 
                 subjectColumn.appendChild(subjectElem)
 
@@ -135,6 +141,8 @@ function injectAssignmentTable() {
                         linkElem.style = 'color: red'
                     } else if (daysLeft < 2) {
                         linkElem.style = 'color: #F6AA00'
+                    } else {
+                        linkElem.style = 'color: green'
                     }
                 } else {
                     linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() === '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=&id=${assignment['id']}`
