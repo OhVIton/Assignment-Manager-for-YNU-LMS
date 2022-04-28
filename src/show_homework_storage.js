@@ -93,9 +93,10 @@ function injectAssignmentTable() {
         for (const assignment of assignments) {
             //separated evaluation of visibility and date left
             if (assignment['isVisible']) {
-                let daysLeft;
-                if (!assignment['due']) {
+                var daysLeft;
+                if (assignment['due']) {
                     daysLeft = (new Date(assignment['due']) - new Date()) / 86400000
+                    console.log(daysLeft)
                     if (daysLeft >= DISPLAY_LIMIT_DAYS) continue
                 }
                 inDleftCnt++

@@ -3,7 +3,7 @@
   "name": "Assignment Manager for YNU LMS",
   "short_name": "ExtOfLMS",
   "description": "Manage your homework easily",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "author": "Vimmer",
   "icons": {
     "16": "icon16.png",
