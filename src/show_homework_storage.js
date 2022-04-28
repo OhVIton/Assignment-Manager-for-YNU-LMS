@@ -96,7 +96,7 @@ function injectAssignmentTable() {
                 var daysLeft;
                 if (assignment['due']) {
                     daysLeft = (new Date(assignment['due']) - new Date()) / 86400000
-                    if (daysLeft >= DISPAY_LIMIT_DAYS) continue
+                    if (daysLeft >= DISPLAY_LIMIT_DAYS) continue
                 }
                 inDleftCnt++
                 // subject, name, due, remove
