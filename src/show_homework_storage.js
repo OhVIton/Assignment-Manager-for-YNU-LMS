@@ -141,8 +141,10 @@ function injectAssignmentTable() {
                         linkElem.style = 'color: red'
                     } else if (daysLeft < 2) {
                         linkElem.style = 'color: #F6AA00'
-                    } else {
+                    } else if (daysLeft < 7){
                         linkElem.style = 'color: green'
+                    } else {
+                        linkElem.style = 'color: turqoise'
                     }
                 } else {
                     linkElem.href = `${GAS_TASKAPI_URL}?language=${getLanguage()}&subject=${getLanguage() === '日本語' ? assignment['subject_ja'] : assignment['subject_en']}&name=${assignment['name']}&due=&id=${assignment['id']}`
