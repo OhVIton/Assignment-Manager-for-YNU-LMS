@@ -3,16 +3,17 @@
   "name": "Assignment Manager for YNU LMS",
   "short_name": "ExtOfLMS",
   "description": "Manage your homework easily",
-  "version": "2.3.8",
+  "version": "2.4.0",
   "author": "Vimmer",
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "icons/icon_16.png",
+    "48": "icons/icon_48.png",
+    "128": "icons/icon_128.png"
   },
   "action": {
     "default_popup": "popup.html"
   },
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "matches": [
@@ -20,23 +21,16 @@
         "https://lms.ynu.ac.jp/lms/tpicTpil/doBack*",
         "https://lms.ynu.ac.jp/lms/infrInfr/doBack*"
       ],
-      "js": [
-        "show_homework_storage.js"
-      ],
-      "css": []
+      "js": ["show_homework_storage.js"],
+      "css": ["mermaid.min.css"]
     },
     {
       "matches": [
         "https://lms.ynu.ac.jp/lms/homeHoml/doLinkKougi*",
         "https://lms.ynu.ac.jp/lms/corsColl/*"
       ],
-      "js": [
-        "fetch_homework_storage.js"
-      ],
+      "js": ["fetch_homework_storage.js"],
       "css": []
     }
-  ],
-  "permissions": [
-    "storage"
   ]
 }
