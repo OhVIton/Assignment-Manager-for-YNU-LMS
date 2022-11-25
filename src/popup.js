@@ -69,7 +69,7 @@ function injectAssignmentTable(assignments) {
     chrome.storage.sync.get(null, (data) => {
       const assignments = Object.values(data);
       for (const assignment of assignments) {
-        if (new Date(assignment.due).getTime < new Date().getTime()) {
+        if (new Date(assignment.due).getTime() < new Date().getTime()) {
           chrome.storage.sync.set(assignment.id, null);
           location.reload();
         }
