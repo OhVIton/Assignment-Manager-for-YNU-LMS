@@ -70,7 +70,7 @@ function injectAssignmentTable(assignments) {
       const assignments = Object.values(data);
       for (const assignment of assignments) {
         if (new Date(assignment.due).getTime() < new Date().getTime()) {
-          chrome.storage.sync.set(assignment.id, null);
+          chrome.storage.sync.remove(assignment.id);
           location.reload();
         }
       }
